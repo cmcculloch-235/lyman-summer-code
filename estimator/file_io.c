@@ -60,7 +60,7 @@ int read_losfile_header(FILE *losfile_fp, double *ztime, double *omegam, double 
 	n_items_read += fread(h100, sizeof(double), 1, losfile_fp);
 	n_items_read += fread(box_length, sizeof(double), 1, losfile_fp);
 	/* convert to cMpc */
-	box_length /= 1000.0;
+	*box_length /= 1000.0;
 	n_items_read += fread(XH, sizeof(double), 1, losfile_fp);
 	
 	n_items_read += fread(nbins, sizeof(uint32_t), 1, losfile_fp);
