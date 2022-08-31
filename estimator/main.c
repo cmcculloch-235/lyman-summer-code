@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 					xcorr_k_max, xcorr_bin_count);
 
 			write_xcorr_data(field_names[i], field_names[j], xcorr_k_buffer,
-					xcorr_output_buffer, *corr_count_buffer, xcorr_bin_count);
+					xcorr_output_buffer, xcorr_count_buffer, xcorr_bin_count);
 		}
 		eprintf("\n");
 	}
