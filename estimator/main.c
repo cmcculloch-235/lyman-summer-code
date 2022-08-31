@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	/* ************** *
 	 * Read in fields * 
 	 * ************** */
-	eprintf("Load data...\n");
+	eprintf("Load data...");
 
 
 
@@ -117,6 +117,7 @@ int main(int argc, char *argv[])
 
 	{
 		int file_read_err = 0;
+		eprintf("LoS file...");
 		file_read_err =  read_losfile_data(losfile_fp, N, nlos, &delta_H, &delta_H1,
 				&delta_DM, &delta_matter);
 		if (file_read_err) {
@@ -124,6 +125,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+		eprintf("tau file...");
 		file_read_err =  read_taufile_data(taufile_fp, N, &tau_field, &delta_tau);
 		if (file_read_err) {
 			eprintf("Error reading fields from tau file (path: %s)\n", TAUFILE);
