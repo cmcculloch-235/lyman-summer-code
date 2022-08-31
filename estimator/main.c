@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 	/* need Fourier-space fields */
 	eprintf("FFT fields...");
 	for (size_t i = 0; i < N_FIELDS; ++i) {
-		eprintf("%s...\n", field_names[i]);
+		eprintf("%s...", field_names[i]);
 		memcpy(fft_rsp_buf, field_list[i], N * sizeof(complex double));
 		fftw_execute(plan_r_to_k);
 		normalise_r_to_k_t(fft_ksp_buf, real_dV, N, N_THREADS);
