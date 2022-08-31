@@ -39,8 +39,8 @@ int read_losfile_header(FILE *losfile_fp, double *ztime, double *omegam, double 
 
 
 	/* for error detection */
-	size_t n_bytes_read = 0;
-	size_t n_bytes_expected = 0;
+	size_t n_items_read = 0;
+	size_t n_items_expected = 0;
 
 	/* expect doubles to be 64-bit */
 	/* this should not be a problem on 64-bit systems, but standards don't
@@ -51,20 +51,20 @@ int read_losfile_header(FILE *losfile_fp, double *ztime, double *omegam, double 
 		return 1;
 	}
 
-	n_bytes_expected = 7 * sizeof(double) + 2 * sizeof(uint32_t);
+	n_bytes_expected = 7 + 2;
 
-	n_bytes_read += fread(ztime, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(omegam, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(omegal, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(omegab, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(h100, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(box_length, sizeof(double), 1, losfile_fp);
-	n_bytes_read += fread(XH, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(ztime, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(omegam, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(omegal, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(omegab, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(h100, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(box_length, sizeof(double), 1, losfile_fp);
+	n_items_read += fread(XH, sizeof(double), 1, losfile_fp);
 	
-	n_bytes_read += fread(nbins, sizeof(uint32_t), 1, losfile_fp);
-	n_bytes_read += fread(nlos, sizeof(uint32_t), 1, losfile_fp);
+	n_items_read += fread(nbins, sizeof(uint32_t), 1, losfile_fp);
+	n_items_read += fread(nlos, sizeof(uint32_t), 1, losfile_fp);
 
-	if (n_bytes_read != n_bytes_expected) {
+	if (n_items_read != n_items_expected) {
 		eprintf("LoS file ended before header was read.\n");
 		return 1;
 	}
@@ -164,9 +164,9 @@ int read_losfile_data(FILE *losfile_fp, size_t N, int nlos, complex double **del
 
 static int read_contrast(complex double **field, double *tmp_buffer,
 		size_t N, FILE *losfile_fp) {
-	size_t n_bytes_read = 0;
+	size_t n_items_read = 0;
 	fread(tmp_buffer, sizeof(double), N, losfile_fp);
-	if (n_bytes_read != N * sizeof(double)) {
+	if (n_items_read != N) {
 		eprintf("LoS file ended while reading data.\n");
 		return 1;
 	}
@@ -198,9 +198,9 @@ int read_taufile_data(FILE *taufile_fp, size_t N, complex double **tau_field, co
 		return 1;
 	}
 
-	size_t n_bytes_read = 0;
+	size_t n_items_read = 0;
 	fread(tmp_buffer, sizeof(double), N, taufile_fp);
-	if (n_bytes_read != N * sizeof(double)) {
+	if (n_items_read != N) {
 		eprintf("LoS file ended while reading tau_field\n");
 	}
 
