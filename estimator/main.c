@@ -147,11 +147,11 @@ int main(int argc, char *argv[])
 	/* NOTE: if there's going to be configuration-space field processing,
 	 * do it here. */
 
-#define N_FIELDS 6
-	complex double *field_list[N_FIELDS] = {delta_H, delta_H1, delta_DM, delta_matter,
-		tau_field, delta_tau};
-	const char *field_names[N_FIELDS] = {"delta_H", "delta_H1", "delta_DM", "delta_matter",
-		"tau_field", "delta_tau"};
+#define N_FIELDS 5
+	complex double *field_list[N_FIELDS] = {delta_H, delta_H1, delta_DM,
+		delta_matter, delta_tau};
+	const char *field_names[N_FIELDS] = {"delta_H", "delta_H1", "delta_DM",
+		"delta_matter", "delta_tau"};
 
 	/* need Fourier-space fields */
 	eprintf("FFT fields...");
@@ -167,10 +167,6 @@ int main(int argc, char *argv[])
 	/* do all sorts of wonderful auto- and cross-correlations */
 	eprintf("Cross-correlations...");
 
-	/* TODO: move these to config.h */
-	const size_t xcorr_bin_count = 100;
-	const double xcorr_k_min = 0.01;
-	const double xcorr_k_max = 1.0;
 
 	double *xcorr_output_buffer = calloc(xcorr_bin_count, sizeof(double));
 	double *xcorr_k_buffer = calloc(xcorr_bin_count, sizeof(double));
@@ -183,6 +179,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < N_FIELDS; ++i) {
 		for (int j = i; j < N_FIELDS; ++j) {
 			eprintf("%s-%s...", field_names[i], field_names[j]);
+			/* k range and bin count specified in config.h */
 			correlator(field_list[i], field_list[j], X, mode_spacing, xcorr_k_buffer,
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
 					xcorr_k_max, xcorr_bin_count);
