@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
 	 * *************************** */
 	
 
+	eprintf("Reading LoS header...");
+
 	FILE *losfile_fp = fopen(LOSFILE, "rb");
 	FILE *taufile_fp = fopen(LOSFILE, "rb");
 	if (!losfile_fp) {
@@ -47,6 +49,8 @@ int main(int argc, char *argv[])
 		}
 
 	}
+
+	eprintf("Done!\n");
 
 	/* Number of points per side of box in real space */
 	size_t X = nbins;
@@ -79,7 +83,7 @@ int main(int argc, char *argv[])
 	complex double *fft_rsp_buf = (complex double *) fftw_malloc(sizeof(complex double) * N);
 
 	/* create plan for Fourier transforms */
-	eprintf("Planning...");
+	eprintf("Planning FFTs...");
 
 	/* Check for FFTW wisdom */
 	int wisdom_success = fftw_import_wisdom_from_filename("FFTW_wisdom");
