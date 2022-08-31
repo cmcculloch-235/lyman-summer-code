@@ -137,7 +137,9 @@ int read_losfile_data(FILE *losfile_fp, size_t N, int nlos, complex double **del
 	 * checking fractionally. */
 
 	int read_contrast_err = 0;
+	eprintf("delta_H...");
 	read_contrast_err |= read_contrast(delta_H, tmp_buffer, N, losfile_fp);
+	eprintf("delta_H1...");
 	read_contrast_err |= read_contrast(delta_H1, tmp_buffer, N, losfile_fp);
 	if (read_contrast_err) {
 		return 1;
@@ -151,7 +153,9 @@ int read_losfile_data(FILE *losfile_fp, size_t N, int nlos, complex double **del
 	}
 
 
+	eprintf("delta_DM...");
 	read_contrast_err |= read_contrast(delta_DM, tmp_buffer, N, losfile_fp);
+	eprintf("delta_matter...");
 	read_contrast_err |= read_contrast(delta_matter, tmp_buffer, N, losfile_fp);
 	if (read_contrast_err) {
 		return 1;
