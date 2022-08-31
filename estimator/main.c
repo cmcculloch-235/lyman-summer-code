@@ -165,6 +165,34 @@ int main(int argc, char *argv[])
 	eprintf("Done!\n");
 
 	/* do all sorts of wonderful auto- and cross-correlations */
+	eprintf("Cross-correlations...");
+
+	/* TODO: move these to config.h */
+	const size_t xcorr_bin_count = 100;
+	const double xcorr_k_min = 0.01;
+	const double xcorr_k_max = 1.0;
+
+	double *xcorr_output_buffer = calloc(xcorr_bin_count, sizeof(double));
+	double *xcorr_k_buffer = calloc(xcorr_bin_count, sizeof(double));
+	size_t *xcorr_count_buffer = calloc(xcorr_bin_count, sizeof(size_t));
+	if (!xcorr_output_buffer || !xcorr_k_buffer || !xcorr_count_buffer) {
+		eprintf("Error allocating memory for cross-correlation output.\n");
+		return 1;
+	}
+
+	for (int i = 0; i < N_FIELDS; ++i) {
+		for (int j = i; j < N_FIELDS; ++j) {
+			eprintf("%s-%s...", field_names[i], field_names[j]);
+			correlator(field_list[i], field_list[j], X, mode_spacing, xcorr_k_buffer,
+					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
+					xcorr_k_max, xcorr_bin_count);
+		}
+	}
+	free(xcorr_output_buffer);
+	free(xcorr_k_buffer);
+	free(xcorr_count_buffer);
+
+	eprintf("Done!\n");
 
 /* this is mainly here for reference */
 
