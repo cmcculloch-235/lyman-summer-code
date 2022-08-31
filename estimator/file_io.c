@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
+#include "config.h"
 #include "util.h"
 #include "file_io.h"
 
