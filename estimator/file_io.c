@@ -182,7 +182,7 @@ static int read_contrast(complex double **field, double *tmp_buffer,
 	/* if we had very fine grids, this would be a good place to use
 	 * thread_map; as it stands, it's not. */
 	for (size_t i = 0; i < N; ++i) {
-		*field[i] = (complex double) (tmp_buffer[i] - 1.0);
+		(*field)[i] = (complex double) (tmp_buffer[i] - 1.0);
 	}
 	return 0;
 }
