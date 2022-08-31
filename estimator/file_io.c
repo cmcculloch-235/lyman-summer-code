@@ -51,7 +51,7 @@ int read_losfile_header(FILE *losfile_fp, double *ztime, double *omegam, double 
 		return 1;
 	}
 
-	n_bytes_expected = 7 + 2;
+	n_items_expected = 7 + 2;
 
 	n_items_read += fread(ztime, sizeof(double), 1, losfile_fp);
 	n_items_read += fread(omegam, sizeof(double), 1, losfile_fp);
