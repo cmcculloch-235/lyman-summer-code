@@ -239,3 +239,44 @@ int read_taufile_data(FILE *taufile_fp, size_t N, complex double **tau_field, co
 	return 0;
 
 }
+
+
+
+int write_xcorr_data(char *field_name_1, char *field_name_2, double *xcorr_k_buffer,
+		double *xcorr_output_buffer, size_t *xcorr_count_buffer, size_t xcorr_bin_count)
+{
+	/* generate output path */
+	const size_t path_bsize = 1024;
+	char *output_path_buffer = calloc(path_bsize, sizeof(char));
+	if (!output_path_buffer) {
+		eprintf("Unable to allocate memory to generate output path\n");
+		return 1;
+	}
+
+	size_t path_length = 0;
+	path_length = snprintf(output_path_buffer, path_bsize, "%s/xcorr_%s_%s.dat",
+			OUT_DIR, field_name_1, field_name_2);
+	if (path_length == path_bsize) {
+		eprintf("Over-long output path\n");
+		return 1;
+	}
+
+	/* open output file */
+	FILE *output_fp = fopen(output_path_buffer, "w");
+	if (!output_fp) {
+		eprintf("Error opening output file %s\n", output_path_buffer);
+	}
+
+	/* write output line by line */
+	/* format: k xcorr count */
+	for (size_t i = 0; i < xcorr_bin_count; ++i) {
+		fprintf(output_fp, "%f %f %zd\n", xcorr_k_buffer[i], xcorr_output_buffer[i],
+				xcorr_count_buffer[i]);
+	}
+
+	/* clean up */
+	fclose(output_fp);
+	free(output_path_buffer);
+
+	return 0;
+}
