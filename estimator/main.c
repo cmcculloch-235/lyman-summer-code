@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
 	double real_spacing = box_length / X;
 	double real_dV = real_spacing * real_spacing * real_spacing;
-	double mode_spacing = 2 * M_PI / real_spacing;
+	double mode_spacing = 2 * M_PI / box_length;
 
 
 
