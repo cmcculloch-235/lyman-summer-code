@@ -203,10 +203,12 @@ int read_taufile_data(FILE *taufile_fp, size_t N, complex double **tau_field, co
 	}
 
 	size_t n_items_read = 0;
-	fread(tmp_buffer, sizeof(double), N, taufile_fp);
+	n_items_read = fread(tmp_buffer, sizeof(double), N, taufile_fp);
 	if (n_items_read != N) {
 		eprintf("LoS file ended while reading tau_field\n");
+		return 1;
 	}
+
 
 	*tau_field = calloc(N, sizeof(complex double));
 	if (!tau_field) {
@@ -222,13 +224,13 @@ int read_taufile_data(FILE *taufile_fp, size_t N, complex double **tau_field, co
 	/* while we're doing this, work on normalisation */
 	double tau_mean = 0.0;
 	for (size_t i = 0; i < N; ++i) {
-		*tau_field[i] = (complex double) (tmp_buffer[i] - 1.0);
+		(*tau_field)[i] = (complex double) (tmp_buffer[i] - 1.0);
 		tau_mean += tmp_buffer[i];
 	}
 	tau_mean /= N;
 	/* generate also optical depth contrast */
 	for (size_t i = 0; i < N; ++i) {
-		*delta_tau[i] = (complex double) (tmp_buffer[i] / tau_mean - 1.0);
+		(*delta_tau)[i] = (complex double) (tmp_buffer[i] / tau_mean - 1.0);
 	}
 
 
