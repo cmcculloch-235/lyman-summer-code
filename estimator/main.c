@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 		memcpy(fft_rsp_buf, field_list[i], N * sizeof(complex double));
 		fftw_execute(plan_r_to_k);
 		normalise_r_to_k_t(fft_ksp_buf, real_dV, N, N_THREADS);
-		memcpy(fft_ksp_buf, field_list[i], N * sizeof(complex double));
+		memcpy(field_list[i], fft_ksp_buf, N * sizeof(complex double));
 	}
 	eprintf("Done!\n");
 
