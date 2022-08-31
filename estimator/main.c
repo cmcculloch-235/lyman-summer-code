@@ -181,9 +181,9 @@ int main(int argc, char *argv[])
 		for (int j = i; j < N_FIELDS; ++j) {
 			eprintf("%s-%s...", field_names[i], field_names[j]);
 			/* zero the buffers before doing anything with them! */
-			bzero(xcorr_output_buffer, N * sizeof(double));
-			bzero(xcorr_k_buffer, N * sizeof(double));
-			bzero(xcorr_count_buffer, N * sizeof(size_t));
+			bzero(xcorr_output_buffer, xcorr_bin_count * sizeof(double));
+			bzero(xcorr_k_buffer, xcorr_bin_count * sizeof(double));
+			bzero(xcorr_count_buffer, xcorr_bin_count * sizeof(size_t));
 			/* k range and bin count specified in config.h */
 			correlator(field_list[i], field_list[j], X, mode_spacing, xcorr_k_buffer,
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
