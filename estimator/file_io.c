@@ -165,7 +165,7 @@ int read_losfile_data(FILE *losfile_fp, size_t N, int nlos, complex double **del
 static int read_contrast(complex double **field, double *tmp_buffer,
 		size_t N, FILE *losfile_fp) {
 	size_t n_items_read = 0;
-	fread(tmp_buffer, sizeof(double), N, losfile_fp);
+	n_items_read = fread(tmp_buffer, sizeof(double), N, losfile_fp);
 	if (n_items_read != N) {
 		eprintf("LoS file ended while reading data.\n");
 		return 1;
