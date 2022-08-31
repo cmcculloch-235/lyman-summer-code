@@ -12,7 +12,7 @@ static const char* OUT_DIR = "out";
 
 /* Specify parameters for cross-correlation estimation */
 static const size_t xcorr_bin_count = 100;
-static const double xcorr_k_min = 0.07;
-static const double xcorr_k_max = 0.5;
+static const double xcorr_k_min = 0.1;
+static const double xcorr_k_max = 1;
 
 #endif
