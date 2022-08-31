@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdint.h>
+#include <strings.h>
 
 #include "util.h"
 #include "estimator.h"
