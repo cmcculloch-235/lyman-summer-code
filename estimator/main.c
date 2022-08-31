@@ -187,6 +187,7 @@ int main(int argc, char *argv[])
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
 					xcorr_k_max, xcorr_bin_count);
 		}
+		eprintf("\n");
 	}
 	free(xcorr_output_buffer);
 	free(xcorr_k_buffer);
