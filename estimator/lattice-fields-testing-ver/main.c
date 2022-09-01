@@ -3,6 +3,8 @@
 #include <fftw3.h>
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 
 #include "../util.h"
 #include "../estimator.h"
@@ -94,7 +96,7 @@ int main(int argc, char *argv[])
 
 #if (PARAM_SMOOTH)
 	eprintf("Smooth...");
-	smooth(field_ksp_buf, KX, mode_spacing, PARAM_SMOOTH_LEN);
+	transform_smooth(field_ksp_buf, KX, mode_spacing, PARAM_SMOOTH_LEN);
 #endif
 
 
@@ -108,6 +110,105 @@ int main(int argc, char *argv[])
 
 	/* output generated linear field in the losfile and taufile formats */
 	/* no careful error checking here... */
+
+	{
+
+		/* LoS file format:
+		 * ****************
+		 * Header: all doubles except the last two, which are uint32_t
+		 * ztime omegam omegal omegab h box_length XH nbins nlos
+		 * lengths in ckpc/h
+		 * ****************
+		 * Body:
+		 * ilos: LoS axis direction: nlos * uint32_t
+		 * xlos: LoS x-position: nlos * double
+		 * ylos
+		 * zlos
+		 * posaxis: distances along LoS for each bin: nbins * double
+		 * velaxis: same but in different units? (recession velocity?)
+		 * rhoker_H: gas overdensity: nlos * nbins * double
+		 * rhoker_H1: neutral hydrogen
+		 * tempker
+		 * velker
+		 * rhoker_DM: CDM overdensity
+		 * rhoker_total: total matter (baryons+CDM) overdensity
+		 * */
+		eprintf("Generate output...");
+
+		FILE *losfile_fp = fopen("losfile_test.dat", "wb");
+		/* write header. nonsense except where it describes field dimensions */
+		/* ztime */
+		eprintf("LoS header...");
+		double out_d = 0.0;
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+		/* omegam */
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+		/* omegal */
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+		/* omegab */
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+		/* h */
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+
+		/* box_length in ckpc/h */
+		out_d = L * 1000;
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+
+		/* XH */
+		out_d = 0.0;
+		fwrite(&out_d, sizeof(double), 1, losfile_fp);
+
+		/* nbins */
+		uint32_t nbins = X;
+		fwrite(&nbins, sizeof(uint32_t), 1, losfile_fp);
+
+		/* nlos */
+		uint32_t nlos = X * X;
+		fwrite(&nlos, sizeof(uint32_t), 1, losfile_fp);
+
+		/* data: nonsense in unused fields; all the ones we care about
+		 * are just the generated Gaussian random fields. */
+		/* ilos */
+		eprintf("LoS body...");
+		fwrite(field_rsp_buf, sizeof(uint32_t), nlos, losfile_fp);
+		/* x,y,z los */
+		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
+		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
+		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
+		/* pos,vel axis */
+		fwrite(field_rsp_buf, sizeof(double), nbins, losfile_fp);
+		fwrite(field_rsp_buf, sizeof(double), nbins, losfile_fp);
+		
+
+		/* add one to the field so it gives overdensity and not contrast */
+		for (size_t i = 0; i < N; ++i) {
+			field_rsp_buf[i] += 1.0;
+		}
+
+		/* rhoker_H */
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		/* rhoker_H1 */
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		/* tempker, velker */
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		/* rhoker_CDM */
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		/* rhoker_total */
+		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+
+		fclose(losfile_fp);
+
+		eprintf("tau file...");
+
+		FILE *taufile_fp = fopen("taufile_test.dat", "wb");
+		/* overdensity field also works as total tau field, having nonzero mean */
+		fwrite(field_rsp_buf, sizeof(double), N, taufile_fp);
+		fclose(taufile_fp);
+		eprintf("Done!\n");
+
+
+	}
 
 	/* ********************* *
 	 * Clean up to be polite *

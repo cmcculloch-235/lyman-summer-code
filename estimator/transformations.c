@@ -99,7 +99,7 @@ static void divide_by_mean_and_sub1(void *in, void *out, size_t index, void *mea
 
 
 static double smoothing_gaussian(double k, double scale);
-void smooth(complex double *ksp, size_t KX, double mode_spacing, double scale)
+void transform_smooth(complex double *ksp, size_t KX, double mode_spacing, double scale)
 {
 	for (size_t l = 0; l < KX; ++l) {
 		for (size_t m = 0; m < KX; ++m) {
