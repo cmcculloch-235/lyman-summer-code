@@ -35,11 +35,11 @@ fig_scale = 12
 fig_aspect = 4/3
 fig, axis = plt.subplots(1, 1, figsize=(fig_scale, fig_scale / fig_aspect))
 stdev = power / np.sqrt(count)
-axis.plot(ks, power, color="black", label="Extracted spectrum")
 axis.plot(ks, power + stdev, color="red")
 axis.plot(ks, power - stdev, color="red")
 axis.plot(ks, power + 2 * stdev, "--", color="yellow")
 axis.plot(ks, power - 2 * stdev, "--", color="yellow")
+axis.plot(ks, power, color="black", label="Extracted spectrum")
 
 
 
