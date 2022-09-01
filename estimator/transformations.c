@@ -98,3 +98,25 @@ static void divide_by_mean_and_sub1(void *in, void *out, size_t index, void *mea
 }
 
 
+static double smoothing_gaussian(double k, double scale);
+void smooth(complex double *ksp, size_t KX, double mode_spacing, double scale)
+{
+	for (size_t l = 0; l < KX; ++l) {
+		for (size_t m = 0; m < KX; ++m) {
+			for (size_t n = 0; n < KX; ++n) {
+				// Gaussian smoothing
+				double k = index_to_k(l, m, n, KX, mode_spacing);
+				ksp[field_rsp_index(l, m, n, KX)] *= (complex double) smoothing_gaussian(k, scale);
+			}
+		}
+	}
+}
+
+double smoothing_gaussian(double k, double scale)
+{
+	// in Mpc/h
+	const double smooth_length_sq = scale * scale;
+	// follows from FT of a Gaussian in 3D
+	// This Gaussian is normalised in real space, so not in reciprocal space.
+	return exp(- k * k * smooth_length_sq / 2);
+}
