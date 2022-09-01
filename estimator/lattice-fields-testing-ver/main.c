@@ -168,34 +168,40 @@ int main(int argc, char *argv[])
 
 		/* data: nonsense in unused fields; all the ones we care about
 		 * are just the generated Gaussian random fields. */
-		/* ilos */
-		eprintf("LoS body...");
-		fwrite(field_rsp_buf, sizeof(uint32_t), nlos, losfile_fp);
-		/* x,y,z los */
-		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
-		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
-		fwrite(field_rsp_buf, sizeof(double), nlos, losfile_fp);
-		/* pos,vel axis */
-		fwrite(field_rsp_buf, sizeof(double), nbins, losfile_fp);
-		fwrite(field_rsp_buf, sizeof(double), nbins, losfile_fp);
-		
+
 
 		/* add one to the field so it gives overdensity and not contrast */
+		/* also we should be writing doubles, not complex doubles! */
+		double *field_out_buf = calloc(N, sizeof(double));
 		for (size_t i = 0; i < N; ++i) {
-			field_rsp_buf[i] += 1.0;
+			field_out_buf[i] = 1.0 + field_rsp_buf[i];
 		}
 
+
+		/* ilos */
+		eprintf("LoS body...");
+		fwrite(field_out_buf, sizeof(uint32_t), nlos, losfile_fp);
+		/* x,y,z los */
+		fwrite(field_out_buf, sizeof(double), nlos, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), nlos, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), nlos, losfile_fp);
+		/* pos,vel axis */
+		fwrite(field_out_buf, sizeof(double), nbins, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), nbins, losfile_fp);
+		
+
+
 		/* rhoker_H */
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
 		/* rhoker_H1 */
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
 		/* tempker, velker */
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
 		/* rhoker_CDM */
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
 		/* rhoker_total */
-		fwrite(field_rsp_buf, sizeof(double), N, losfile_fp);
+		fwrite(field_out_buf, sizeof(double), N, losfile_fp);
 
 		fclose(losfile_fp);
 
@@ -203,8 +209,9 @@ int main(int argc, char *argv[])
 
 		FILE *taufile_fp = fopen("taufile_test.dat", "wb");
 		/* overdensity field also works as total tau field, having nonzero mean */
-		fwrite(field_rsp_buf, sizeof(double), N, taufile_fp);
+		fwrite(field_out_buf, sizeof(double), N, taufile_fp);
 		fclose(taufile_fp);
+		free(field_out_buf);
 		eprintf("Done!\n");
 
 

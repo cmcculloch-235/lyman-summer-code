@@ -6,51 +6,6 @@
 #include "util.h"
 #include "estimator.h"
 
-double spec_flat(double k)
-{
-	/* just a uniform power spectrum for testing purposes */
-	return 1.0;
-}
-double spec_gaussian(double k)
-{
-	return  exp(- k * k * pow(1.0e2, 2)) * 1e8;
-}
-
-double spec_delta(double k)
-{
-	if (k >= 1e-3)
-		return 0.0;
-	return 1.0e9;
-
-}
-
-double spec_linear(double k)
-{
-	return k;
-}
-
-
-static double bbks_f(double x);
-static const double EPSILON = 1e-8;
-
-double spec_bbks(double k)
-{
-	/* units of h/Mpc in k, (Mpc/h)^3 in A */
-	const double A = 5.1e4;
-	const double k_eq = 0.01;
-	const double n = 0.967;
-
-	return A * pow(k / k_eq, n) * pow(bbks_f(k / k_eq), 2);
-
-}
-
-
-static double bbks_f(double x)
-{
-	double Q = log(1 + 0.171 * x) / (0.171 * x + EPSILON);
-	double R = 1 + 0.274 * x + pow(1.18 * x, 2) + pow(0.399 * x, 3) + pow(0.49 * x, 4);
-	return Q * pow(R, -0.25);
-}
 
 /* TODO: write a more general field correlator function */
 /* It will be a fairly simple copy-paste of this one */
@@ -182,6 +137,9 @@ void correlator(complex double *field_1, complex double *field_2, size_t KX,
 	for (size_t i = 0; i < n_bins; ++i) {
 		bin_buffer[i] /= n_buffer[i];
 		k_buffer[i] /= n_buffer[i];
+
+	//	bin_buffer[i] = 1.0;
+		//k_buffer[i] = 0.0;
 	}
 
 }
