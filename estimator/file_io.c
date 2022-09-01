@@ -267,6 +267,7 @@ int write_xcorr_data(char *field_name_1, char *field_name_2, double *xcorr_k_buf
 	FILE *output_fp = fopen(output_path_buffer, "w");
 	if (!output_fp) {
 		eprintf("Error opening output file %s\n", output_path_buffer);
+		return 1;
 	}
 
 	/* write output line by line */
