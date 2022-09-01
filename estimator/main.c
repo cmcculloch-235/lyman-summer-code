@@ -189,8 +189,12 @@ int main(int argc, char *argv[])
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
 					xcorr_k_max, xcorr_bin_count);
 
-			write_xcorr_data(field_names[i], field_names[j], xcorr_k_buffer,
+			int write_err = write_xcorr_data(field_names[i], field_names[j], xcorr_k_buffer,
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_bin_count);
+			if (write_err) {
+				eprintf("Failed to write output.\n");
+				return 1;
+			}
 		}
 		eprintf("\n");
 	}
