@@ -47,7 +47,7 @@ axis.plot(ks, power - 2 * stdev, "--", color="yellow")
 axis.legend()
 
 axis.set_xlabel("$k/ (h/\mathrm{Mpc})$")
-axis.set_title("General biasing power spectrum terms")
+axis.set_title("Extracted matter power spectrum")
 
 axis.set_xscale("log", basex=10)
 axis.set_yscale("log", basey=10)
