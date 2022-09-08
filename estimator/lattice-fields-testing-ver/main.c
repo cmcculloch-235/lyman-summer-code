@@ -81,7 +81,9 @@ int main(int argc, char *argv[])
 
 	/* Physical size of the box in units of Mpc/h */
 	/* TODO: work out a sensible value for this */
-	double L = 2500.0;
+	//double L = 2500.0;
+	//80Mpc box
+	double L = 80;
 	double mode_spacing = 2.0 * M_PI / L;
 	double real_spacing = L / X;
 	// 1/(this * N) is also (deltak/2pi)^3
@@ -148,6 +150,7 @@ int main(int argc, char *argv[])
 		/* omegab */
 		fwrite(&out_d, sizeof(double), 1, losfile_fp);
 		/* h */
+		out_d = 1.0;
 		fwrite(&out_d, sizeof(double), 1, losfile_fp);
 
 		/* box_length in ckpc/h */

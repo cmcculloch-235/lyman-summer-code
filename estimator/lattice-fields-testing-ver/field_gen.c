@@ -13,7 +13,7 @@
 double spec_flat(double k)
 {
 	/* just a uniform power spectrum for testing purposes */
-	return 1.0;
+	return 8.0;
 }
 double spec_gaussian(double k)
 {

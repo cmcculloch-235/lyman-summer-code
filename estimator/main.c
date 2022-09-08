@@ -19,6 +19,11 @@
 int main(int argc, char *argv[])
 {
 
+	eprintf("===============\n");
+	eprintf("WARNING: SpecExtract_mpi output format changed: rhoker_total -> rhoker_baryons. "
+			"Need to account for that in file_io and calculate delta_matter accordingly.\n");
+	eprintf("===============\n");
+
 	/* *************************** *
 	 * Read headers from data file *
 	 * *************************** */
@@ -51,6 +56,8 @@ int main(int argc, char *argv[])
 
 	}
 
+	eprintf("z = %f. Box size: %fcMpc/h...", ztime, box_length);
+
 	eprintf("Done!\n");
 
 	/* Number of points per side of box in real space */
@@ -72,7 +79,7 @@ int main(int argc, char *argv[])
 	 * *********** */
 	/* Based on `info fftw` and Jeong's thesis */
 
-	const int N_THREADS = 8;
+	const int N_THREADS = 1;
 
 	/* Documentation says to enable multi-threading before calling ANY fftw
 	 * functions. Presumably includes fftw_malloc. */
@@ -114,20 +121,22 @@ int main(int argc, char *argv[])
 
 
 
-	complex double *delta_H, *delta_H1, *delta_DM, *delta_matter, *tau_field, *delta_tau;
+	complex double *delta_H, *delta_H1, *delta_DM, *delta_matter, *tau_field,
+			*delta_tau, *delta_flux;
 
 	{
 		int file_read_err = 0;
 		eprintf("LoS file...");
-		file_read_err =  read_losfile_data(losfile_fp, N, nlos, &delta_H, &delta_H1,
-				&delta_DM, &delta_matter);
+		file_read_err =  read_losfile_data(losfile_fp, N, X, &delta_H, &delta_H1,
+				&delta_DM, &delta_matter, omegam, omegab);
 		if (file_read_err) {
 			eprintf("Error reading fields from LoS file (path: %s)\n", LOSFILE);
 			return 1;
 		}
 
 		eprintf("tau file...");
-		file_read_err =  read_taufile_data(taufile_fp, N, &tau_field, &delta_tau);
+		file_read_err =  read_taufile_data(taufile_fp, N, &tau_field, &delta_tau,
+				&delta_flux);
 		if (file_read_err) {
 			eprintf("Error reading fields from tau file (path: %s)\n", TAUFILE);
 			return 1;
@@ -145,14 +154,29 @@ int main(int argc, char *argv[])
 	 * Time to process the data *
 	 * ************************ */
 
+	eprintf("Processing data...");
 	/* NOTE: if there's going to be configuration-space field processing,
 	 * do it here. */
 
-#define N_FIELDS 5
+	eprintf("Estimator-time total matter...");
+	/* estimator-time total matter */
+	complex double *delta_matter_et = calloc(N, sizeof(complex double));
+	if (!delta_matter_et) {
+		eprintf("Failed to allocate memory for estimator-time matter.\n");
+		return 1;
+	}
+
+	for (size_t i = 0; i < N; ++i) {
+		delta_matter_et[i] = (omegab * delta_H[i] + (omegam - omegab) * delta_DM[i]) / omegam;
+	}
+
+	eprintf("Done!\n");
+
+#define N_FIELDS 7
 	complex double *field_list[N_FIELDS] = {delta_H, delta_H1, delta_DM,
-		delta_matter, delta_tau};
+		delta_matter, delta_tau, delta_flux, delta_matter_et};
 	const char *field_names[N_FIELDS] = {"delta_H", "delta_H1", "delta_DM",
-		"delta_matter", "delta_tau"};
+		"delta_matter", "delta_tau", "delta_flux", "delta_matter_et"};
 
 	/* need Fourier-space fields */
 	eprintf("FFT fields...");
@@ -185,7 +209,7 @@ int main(int argc, char *argv[])
 			bzero(xcorr_k_buffer, xcorr_bin_count * sizeof(double));
 			bzero(xcorr_count_buffer, xcorr_bin_count * sizeof(size_t));
 			/* k range and bin count specified in config.h */
-			correlator(field_list[i], field_list[j], X, mode_spacing, xcorr_k_buffer,
+			correlator(field_list[i], field_list[j], X, mode_spacing, h100, xcorr_k_buffer,
 					xcorr_output_buffer, xcorr_count_buffer, xcorr_k_min,
 					xcorr_k_max, xcorr_bin_count);
 
