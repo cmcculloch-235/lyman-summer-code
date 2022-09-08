@@ -17,4 +17,4 @@ lattice-fields-test: $(OBJECTS_TEST) $(OBJECTS_SHARED)
 	 cc $(CFLAGS) $(OBJECTS_TEST) $(OBJECTS_SHARED) -o lattice-fields-testing-ver/test 
 
 clean:
-	rm *.o main lattice-fields-testing-ver/*.o lattice-fields-testing-ver/test
+	rm -f *.o main lattice-fields-testing-ver/*.o lattice-fields-testing-ver/test
