@@ -16,15 +16,12 @@
 //static const char* TAUFILE = "../../src/SpecExtract_mpi_with_total/out_80_snap18/tau256_n65536_z2.000.dat";
 //static const char* LOSFILE = "lattice-fields-testing-ver/losfile_test.dat";
 //static const char* TAUFILE = "lattice-fields-testing-ver/taufile_test.dat";
-//static const char* LOSFILE = "out_80_snap0/los256_n65536_z10.000.dat";
-//static const char* TAUFILE = "out_80_snap0/tau256_n65536_z10.000.dat";
-//static const char* LOSFILE = "out_80_snap18_new/los256_n65536_z2.000.dat";
-//static const char* TAUFILE = "out_80_snap18_new/tau_r.dat";
+//static const char* LOSFILE = "out_80_snap18/los256_n65536_z2.000.dat";
+//static const char* TAUFILE = "out_80_snap18/tau_r.dat";
 static const char* LOSFILE = "out_80_ics/los256_n65536_z99.000.dat";
 static const char* TAUFILE = "out_80_ics/tau256_n65536_z99.000.dat";
 
-//static const char* OUT_DIR = "out/80_snap18_new/";
-//static const char* OUT_DIR = "out/80_snap0";
+//static const char* OUT_DIR = "out/80_snap18/";
 static const char* OUT_DIR = "out/80_ics/";
 
 /* relevant for dark matter normalisation */

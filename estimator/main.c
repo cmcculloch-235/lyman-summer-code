@@ -19,10 +19,6 @@
 int main(int argc, char *argv[])
 {
 
-	eprintf("===============\n");
-	eprintf("WARNING: SpecExtract_mpi output format changed: rhoker_total -> rhoker_baryons. "
-			"Need to account for that in file_io and calculate delta_matter accordingly.\n");
-	eprintf("===============\n");
 
 	/* *************************** *
 	 * Read headers from data file *
@@ -32,7 +28,7 @@ int main(int argc, char *argv[])
 	eprintf("Reading LoS header...");
 
 	FILE *losfile_fp = fopen(LOSFILE, "rb");
-	FILE *taufile_fp = fopen(LOSFILE, "rb");
+	FILE *taufile_fp = fopen(TAUFILE, "rb");
 	if (!losfile_fp) {
 		eprintf("Error opening file %s\n", LOSFILE);
 		return 1;
@@ -56,7 +52,11 @@ int main(int argc, char *argv[])
 
 	}
 
-	eprintf("z = %f. Box size: %fcMpc/h...", ztime, box_length);
+	if (USE_MPC_H) {
+		eprintf("z = %f. Box size: %fcMpc/h...", ztime, box_length);
+	} else {
+		eprintf("z = %f. Box size: %fcMpch...", ztime, box_length);
+	}
 
 	eprintf("Done!\n");
 
@@ -158,25 +158,14 @@ int main(int argc, char *argv[])
 	/* NOTE: if there's going to be configuration-space field processing,
 	 * do it here. */
 
-	eprintf("Estimator-time total matter...");
-	/* estimator-time total matter */
-	complex double *delta_matter_et = calloc(N, sizeof(complex double));
-	if (!delta_matter_et) {
-		eprintf("Failed to allocate memory for estimator-time matter.\n");
-		return 1;
-	}
-
-	for (size_t i = 0; i < N; ++i) {
-		delta_matter_et[i] = (omegab * delta_H[i] + (omegam - omegab) * delta_DM[i]) / omegam;
-	}
 
 	eprintf("Done!\n");
 
-#define N_FIELDS 7
+#define N_FIELDS 6
 	complex double *field_list[N_FIELDS] = {delta_H, delta_H1, delta_DM,
-		delta_matter, delta_tau, delta_flux, delta_matter_et};
+		delta_matter, delta_tau, delta_flux};
 	const char *field_names[N_FIELDS] = {"delta_H", "delta_H1", "delta_DM",
-		"delta_matter", "delta_tau", "delta_flux", "delta_matter_et"};
+		"delta_matter", "delta_tau", "delta_flux"};
 
 	/* need Fourier-space fields */
 	eprintf("FFT fields...");

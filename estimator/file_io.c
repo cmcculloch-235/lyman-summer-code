@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "config.h"
 #include "util.h"
@@ -62,10 +63,11 @@ int read_losfile_header(FILE *losfile_fp, double *ztime, double *omegam, double 
 	/* convert to cMpc/h */
 	*box_length /= 1000.0;
 
-#ifndef USE_MPC_H
-	/* convert to cMpc */
-	box_length *= h100;
-#endif
+	if (!USE_MPC_H) {
+		eprintf("convert units. h = %e...", *h100);
+		/* convert to cMpc */
+		*box_length *= *h100;
+	}
 
 	n_items_read += fread(XH, sizeof(double), 1, losfile_fp);
 	
@@ -179,39 +181,19 @@ int read_losfile_data(FILE *losfile_fp, size_t N, size_t X, complex double **del
 		return 1;
 	}
 
-	for (size_t i = 0; i < N; ++i) {
-		(*delta_matter)[i] = (omegab * (*delta_H)[i] + (omegam - omegab) * (*delta_DM)[i]) / omegam;
+	/* quick check to see implicitly whether we're working on initial data (no H) */
+	if (isnan((float) (*delta_H)[0])) {
+		/* working on initial data: delta_m = delta_DM */
+		eprintf("Working on initial data. delta_matter = delta_DM...");
+		memcpy((*delta_matter), (*delta_DM), N * sizeof(complex double));
+	} else {
+		for (size_t i = 0; i < N; ++i) {
+			(*delta_matter)[i] = (omegab * (*delta_H)[i] + (omegam - omegab) * (*delta_DM)[i]) / omegam;
+		}
 	}
 
-
-
-
-	/* dark matter normalisation issue */
-	/* output is n_particles / particles per snapfile, but want
-	 * n_particles / average particles = n_particles / (particles per snapfile 
-	 * * n_snaps) * n_cells */
-	/* and is particles per snapfile even constant? */
-	/* IN FACT, all the fields seem to be coming in with mean 1, after all,
-	 * so maybe it's fine */
-	/* solve this by just contrasting fields in read_contrast */
-	/*
-	for (size_t i = 0; i < N; ++i) {
-		(*delta_DM)[i] = (((*delta_DM)[i] + 1.0) * N / N_SNAPS) - 1.0;
-	}
-	*/
 	
-	/*
-	double ev_DM = 0.0;
-	double ev_H = 0.0;
-	for (size_t i = 0; i < N; ++i) {
-		ev_DM += (*delta_matter)[i] + 1.0;
-		ev_H += (*delta_H)[i] + 1.0;
-	}
-	ev_DM /= N;
-	ev_H /= N;
-	eprintf("\nDM: %f | H: %f\n", ev_DM, ev_H);
-	*/
-
+	
 
 	free(tmp_buffer);
 	return 0;

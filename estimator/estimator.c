@@ -187,10 +187,10 @@ void correlator(complex double *field_1, complex double *field_2, size_t KX,
 		 * multiply by h^3 to get power in cMpc^6, which doesn't get extra
 		 * time-dependent scaling and is in the coordinates in which perturbations
 		 * grow in a simple manner. */
-#ifndef USE_MPC_H
+		if (!USE_MPC_H) {
 		/* convert to cMpc^3 */
 		bin_buffer[i] *= pow(h, 3);
-#endif
+		}
 
 	//	bin_buffer[i] = 1.0;
 		//k_buffer[i] = 0.0;
